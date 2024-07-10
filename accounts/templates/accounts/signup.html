@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .form-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 10px;
+        }
+        .form-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input[type=text],
+        .form-group input[type=email],
+        .form-group input[type=password],
+        .form-group input[type=file],
+        .form-group select {
+            width: calc(100% - 10px);
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        .form-group .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        .form-group .btn:hover {
+            background-color: #45a049;
+        }
+        .password-message {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #f44336;
+        }
+        .password-valid {
+            color: #4CAF50;
+        }
+        .password-match {
+            color: #4CAF50;
+        }
+        .password-mismatch {
+            color: #f44336;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+    <script>
+        function validatePassword() {
+            var password = document.getElementById("id_password1");
+            var confirmPassword = document.getElementById("id_password2");
+            var passwordMessage = document.getElementById("password-message");
+            var matchMessage = document.getElementById("match-message");
+
+            // Validate password
+            if (password.value.length < 8 || !password.value.match(/[A-Z]/) || !password.value.match(/[a-z]/) || !password.value.match(/[0-9]/) || !password.value.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)) {
+                passwordMessage.innerHTML = "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.";
+                password.classList.remove("valid");
+                password.classList.add("invalid");
+            } else {
+                passwordMessage.innerHTML = "Password is valid";
+                passwordMessage.classList.add("password-valid");
+                password.classList.remove("invalid");
+                password.classList.add("valid");
+            }
+
+            // Validate match
+            if (password.value !== confirmPassword.value) {
+                matchMessage.innerHTML = "Passwords do not match";
+                matchMessage.classList.remove("password-match");
+                matchMessage.classList.add("password-mismatch");
+            } else {
+                matchMessage.innerHTML = "Passwords match";
+                matchMessage.classList.remove("password-mismatch");
+                matchMessage.classList.add("password-match");
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="form-title">Signup</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="user_type">User Type:</label>
+                <select name="user_type" id="id_user_type" required>
+                    <option value="patient">Patient</option>
+                    <option value="doctor">Doctor</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="first_name">First Name:</label>
+                {{ user_form.first_name.errors }}
+                {{ user_form.first_name }}
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                {{ user_form.last_name.errors }}
+                {{ user_form.last_name }}
+            </div>
+            <div class="form-group">
+                <label for="profile_photo">Profile Photo:</label>
+                <input type="file" name="profile_photo" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="address_line1">Address Line 1:</label>
+                {{ patient_form.address_line1.errors }}
+                {{ patient_form.address_line1 }}
+            </div>
+            <div class="form-group">
+                <label for="address_line2">Address Line 2:</label>
+                {{ patient_form.address_line2.errors }}
+                {{ patient_form.address_line2 }}
+            </div>
+            <div class="form-group">
+                <label for="city">City:</label>
+                {{ patient_form.city.errors }}
+                {{ patient_form.city }}
+            </div>
+            <div class="form-group">
+                <label for="state">State:</label>
+                {{ patient_form.state.errors }}
+                {{ patient_form.state }}
+            </div>
+            <div class="form-group">
+                <label for="pincode">Pincode:</label>
+                {{ patient_form.pincode.errors }}
+                {{ patient_form.pincode }}
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                {{ user_form.email.errors }}
+                {{ user_form.email }}
+            </div>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                {{ user_form.username.errors }}
+                {{ user_form.username }}
+            </div>
+            <div class="form-group">
+                <label for="password1">Password:</label>
+                {{ user_form.password1.errors }}
+                <input type="password" name="password1" id="id_password1" onkeyup="validatePassword()" required>
+                <div class="password-message" id="password-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="password2">Confirm Password:</label>
+                {{ user_form.password2.errors }}
+                <input type="password" name="password2" id="id_password2" onkeyup="validatePassword()" required>
+                <div class="password-message" id="match-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn">Signup</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
